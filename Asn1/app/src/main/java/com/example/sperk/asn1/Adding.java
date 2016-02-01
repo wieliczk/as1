@@ -54,9 +54,9 @@ public class Adding extends ActionBarActivity {
     // Returns to MainActivity and sends Message
     public void backToMain_C(View view) {
         Intent cancels = new Intent(this, MainActivity.class);
-        // Code take from http://stackoverflow.com/questions/11460896/button-to-go-back-to-mainactivity
         Toast dataCan = new Toast(getApplicationContext());
         dataCan.makeText(Adding.this, "Data Entry Cancelled", dataCan.LENGTH_SHORT).show();
+        // Code take from http://stackoverflow.com/questions/11460896/button-to-go-back-to-mainactivity
         cancels.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(cancels);
     }
@@ -66,6 +66,7 @@ public class Adding extends ActionBarActivity {
         Toast dataSaved = new Toast(getApplicationContext());
         dataSaved.makeText(Adding.this, "Data Entry Saved", dataSaved.LENGTH_SHORT).show();
         Intent saved = new Intent(this, MainActivity.class);
+        // Code take from http://stackoverflow.com/questions/11460896/button-to-go-back-to-mainactivity
         saved.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(saved);
     }
@@ -119,13 +120,11 @@ public class Adding extends ActionBarActivity {
         try {
             FileInputStream fis = openFileInput(FILENAME);
             BufferedReader in = new BufferedReader(new InputStreamReader(fis));
-
             Gson gson = new Gson();
             // Taken from Google
             Type listType = new TypeToken<ArrayList<Data_Entry>>() {}.getType();
             D_logs = gson.fromJson(in, listType);
         } catch (FileNotFoundException e) {
-            // Do I even need to create a log if nothing is there?
             D_logs = new ArrayList<Data_Entry>();
 //            d_logs.setData_logs(D_logs);
         }
@@ -141,8 +140,8 @@ public class Adding extends ActionBarActivity {
             out.flush();
             fos.close();
         } catch (FileNotFoundException e) {
-            // Do nothing if no file is found. Right?
-            //throw new RuntimeException();
+            // Do nothing
+
         } catch (IOException e) {
             throw new RuntimeException();
         }

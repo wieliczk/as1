@@ -73,6 +73,9 @@ public class viewingAct extends ActionBarActivity {
                     clr.flush();
                     fos.close();
                     adapter.notifyDataSetChanged();
+                    // Added to update total cost back to zero
+                    TextView totalFuels = (TextView) findViewById(R.id.totalFuelText);
+                    totalFuels.setText("Total Fuel Cost: 0.00");
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException();
                 } catch (IOException e) {
