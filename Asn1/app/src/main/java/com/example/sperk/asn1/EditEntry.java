@@ -26,6 +26,11 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+/*
+ * Edit Entry is accessed from clicking on a entry in the
+ * list view, can remove, edit or cancel anc just go back
+ * to viewing
+ */
 public class EditEntry extends ActionBarActivity {
 
     private static String FILENAME = "file.sav"; //Taken from lonely twitter
@@ -36,21 +41,22 @@ public class EditEntry extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        // Grabs the position passed through and is used to access and edit correct log
         final int ed_log = getIntent().getExtras().getInt("data_logEdit");
         setContentView(R.layout.activity_edit_entry);
         loadFromFile();
         datalogSetup(ed_log);
-        Button update_bttn = (Button) findViewById(R.id.up_button);
-        Button cancel_bttn = (Button) findViewById(R.id.cn_update);
-        Button remove_bttn = (Button) findViewById(R.id.button_rm);
 
+        // Cancel Button is used directly in xml file for onClick
+        Button remove_bttn = (Button) findViewById(R.id.button_rm);
+        Button update_bttn = (Button) findViewById(R.id.up_button);
         update_bttn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 errorHandleEdit(ed_log);
             }
         });
-
         remove_bttn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,18 +65,17 @@ public class EditEntry extends ActionBarActivity {
         });
     }
 
-
+    // Called from onClick of cancel button and goes back to viewing screen
     public void backToView(View view) {
         Intent cancels = new Intent(this, viewingAct.class);
-
-        // Code take from http://stackoverflow.com/questions/11460896/button-to-go-back-to-mainactivity
         Toast dataCan = new Toast(getApplicationContext());
         dataCan.makeText(EditEntry.this, "Data Edit Cancelled", dataCan.LENGTH_SHORT).show();
+        // Code take from http://stackoverflow.com/questions/11460896/button-to-go-back-to-mainactivity
         cancels.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(cancels);
     }
 
-
+    // Taken from lonely twitter
     public void loadFromFile() {
         try {
             FileInputStream fis = openFileInput(FILENAME);
@@ -86,6 +91,7 @@ public class EditEntry extends ActionBarActivity {
         }
     }
 
+    // Sends message (based on int given) and returns to viewing screen
     public void saveToMain(int message) {
         if (message == 1) {
             Toast dataSaved = new Toast(getApplicationContext());
@@ -96,11 +102,13 @@ public class EditEntry extends ActionBarActivity {
             dataSaved.makeText(EditEntry.this, "Data Entry Removed", dataSaved.LENGTH_SHORT).show();
         }
         Intent saved = new Intent(this, viewingAct.class);
+        // Code take from http://stackoverflow.com/questions/11460896/button-to-go-back-to-mainactivity
         saved.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(saved);
 
     }
 
+    // Taken from lonely twitter
     public void saveInFile() {
         try {
             FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
@@ -117,6 +125,7 @@ public class EditEntry extends ActionBarActivity {
         }
     }
 
+    // Same as previously used in added.java
     public int checkDate(String string) {
         int isWrong = 1;
         try {
@@ -149,34 +158,35 @@ public class EditEntry extends ActionBarActivity {
                 }
             }
         } catch (Exception e) {
-            //Toast fails = new Toast(getApplicationContext());
-            //fails.makeText(Adding.this, "Incorrect Date", fails.LENGTH_SHORT).show();
-
-
+            // Do nothing
         }
         return isWrong;
     }
 
+    // Adds current log data above text enter fields
     public void datalogSetup(int ed_log) {
         TextView data_text = (TextView) findViewById(R.id.dateText);
-        data_text.setText("Enter Date:  (Original: " + D_logs.get(ed_log).getDate() + ")");
+        data_text.setText("Enter Date:  (Currently: " + D_logs.get(ed_log).getDate() + ")");
 
         TextView station_text = (TextView) findViewById(R.id.stationText);
-        station_text.setText("Enter Station: (Original: " + D_logs.get(ed_log).getStation() + ")");
+        station_text.setText("Enter Station: (Currently: " + D_logs.get(ed_log).getStation() + ")");
 
         TextView grade_text = (TextView) findViewById(R.id.gradeText);
-        grade_text.setText("Enter Grade: (Original: " + D_logs.get(ed_log).getFlGrade() + ")");
+        grade_text.setText("Enter Grade: (Currently: " + D_logs.get(ed_log).getFlGrade() + ")");
 
         TextView unit_text = (TextView) findViewById(R.id.unitText);
-        unit_text.setText("Enter Cost (cents/L): (Original: " + D_logs.get(ed_log).getFlUnit() + ")");
+        unit_text.setText("Enter Cost (cents/L): (Currently: " + D_logs.get(ed_log).getFlUnit() + ")");
 
         TextView odo_text = (TextView) findViewById(R.id.odoText);
-        odo_text.setText("Enter Odometer: (Original: " + D_logs.get(ed_log).getOdoMeter() + ")");
+        odo_text.setText("Enter Odometer: (Currently: " + D_logs.get(ed_log).getOdoMeter() + ")");
 
         TextView amount_text = (TextView) findViewById(R.id.amountText);
-        amount_text.setText("Enter Amount (In L): (Original: " + D_logs.get(ed_log).getFlAmount() + ")");
+        amount_text.setText("Enter Amount (In L): (Currently: " + D_logs.get(ed_log).getFlAmount() + ")");
     }
 
+    // Checks each field for edit, if field unchange (left "")
+    // Program will move on, otherwise it will error check if correct set the log entry
+    // Try and catch to catch any wrong entry
     public void errorHandleEdit(int ed_log) {
         int counter = 0;
         try {
@@ -257,16 +267,17 @@ public class EditEntry extends ActionBarActivity {
                     counter++;
                 }
             }
+            // Recalculates the costs incase entry was updated
             D_logs.get(ed_log).findCost();
             saveInFile();
             saveToMain(1);
         } catch (Exception e) {
-            // Do Nothing
             Toast dataWrong = new Toast(getApplicationContext());
             dataWrong.makeText(EditEntry.this, "Incorrect Entry", dataWrong.LENGTH_SHORT).show();
         }
     }
 
+    // Removes entire entry log and sends back to viewing screen
     public void removeLogEntry(int ed_log) {
         D_logs.remove(ed_log);
         saveInFile();

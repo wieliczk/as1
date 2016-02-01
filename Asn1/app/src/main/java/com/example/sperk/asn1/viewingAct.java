@@ -28,9 +28,14 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * ViewingAct creates a listView for all of the entries
+ * Each entry can be clicked which sends it to and edit screen
+ * Clear button clears all entries and updates list
+ * Back button goes back to MainActivity
+ */
 public class viewingAct extends ActionBarActivity {
     private static String FILENAME = "file.sav";
-
     private ArrayList<Data_Entry> D_logs = new ArrayList<Data_Entry>();
     private ArrayAdapter<Data_Entry> adapter;
     private ListView dataList;
@@ -41,9 +46,10 @@ public class viewingAct extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewing);
+
+        // Back button implimented in xml file with onClick to backFromView()
         dataList = (ListView) findViewById(R.id.dataList);
         Button removeData = (Button) findViewById(R.id.buttonClears);
-
         dataList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -53,8 +59,7 @@ public class viewingAct extends ActionBarActivity {
             }
         });
 
-
-
+        // Clears entries and updates list
         removeData.setOnClickListener(new View.OnClickListener() {
             @Override
             // Taken From Lonely Twitter
@@ -68,7 +73,6 @@ public class viewingAct extends ActionBarActivity {
                     clr.flush();
                     fos.close();
                     adapter.notifyDataSetChanged();
-
                 } catch (FileNotFoundException e) {
                     throw new RuntimeException();
                 } catch (IOException e) {
@@ -81,9 +85,13 @@ public class viewingAct extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // Loads file from Gson
         loadFromFile();
+
+        // Gets size and finds total cost of all entries
         arrSize = D_logs.size();
         totalCost = findTotalFuel(arrSize);
+        // Sends totalcost to a text view
         TextView totalFuels = (TextView) findViewById(R.id.totalFuelText);
         String totalCostString = String.format("%.02f", totalCost);
         totalFuels.setText("Total Fuel Cost: " + totalCostString);
@@ -107,11 +115,12 @@ public class viewingAct extends ActionBarActivity {
             Type listType = new TypeToken<ArrayList<Data_Entry>>() {}.getType();
             // Read arraylist from json and set list to it
             D_logs = gson.fromJson(in, listType);
-
         } catch (FileNotFoundException e) {
             D_logs = new ArrayList<Data_Entry>();
         }
     }
+
+    // Gathers all fuel costs using for loop
     public float findTotalFuel(int size) {
         float total = 0;
         for (int i = 0; i < size; i++) {

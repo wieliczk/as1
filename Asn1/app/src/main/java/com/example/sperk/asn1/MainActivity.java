@@ -23,6 +23,11 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+/*
+ * Main activity allows users to choose to view a the list
+ * or add an entry.
+ * Main Activity does not deal with data.
+ */
 public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +36,13 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    // Starts add entry screen
     public void addingActivity(View view) {
-        // IF THERE IS A JSON MUST SAVE IT TO GO INTO OTHER ACTIVITY
         Intent adder = new Intent(this, Adding.class);
         startActivity(adder);
-
-
     }
 
+    // Starts viewing entries screen
     public void viewActivity(View view) {
         Intent viewer = new Intent(this, viewingAct.class);
         startActivity(viewer);
@@ -62,13 +66,11 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
     }
 }

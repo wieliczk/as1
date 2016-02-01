@@ -23,6 +23,13 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+/*
+ * Adding adds a data entry to the saved list of entries
+ * Has checks for the date as well as the floats
+ * If all is correct, will save entries to Gson and
+ * sends user back to MainActivity screen with a toast message
+ * saying entry saved.
+ */
 public class Adding extends ActionBarActivity {
     private static String FILENAME = "file.sav";
     private ArrayList<Data_Entry> D_logs = new ArrayList<Data_Entry>();
@@ -42,6 +49,9 @@ public class Adding extends ActionBarActivity {
       });
    }
 
+    // backToMain_C is called from onClick funciton of the xml file
+    // Cancel button clickable is applied to backToMain_C
+    // Returns to MainActivity and sends Message
     public void backToMain_C(View view) {
         Intent cancels = new Intent(this, MainActivity.class);
         // Code take from http://stackoverflow.com/questions/11460896/button-to-go-back-to-mainactivity
@@ -50,6 +60,8 @@ public class Adding extends ActionBarActivity {
         cancels.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(cancels);
     }
+
+    // Returns to MainActivity and sends message
     public void saveToMain() {
         Toast dataSaved = new Toast(getApplicationContext());
         dataSaved.makeText(Adding.this, "Data Entry Saved", dataSaved.LENGTH_SHORT).show();
@@ -58,12 +70,16 @@ public class Adding extends ActionBarActivity {
         startActivity(saved);
     }
 
+    // Checks proper date entry
+    // If completes every check, only then is date accepted
     public int checkDate(String string) {
         int isWrong = 1;
         try {
             int year = Integer.parseInt(string.substring(0, 4));
             String dash = string.substring(4,5);
             if(dash.equals("-")) {
+
+                // Checks for proper month
                 int month = Integer.parseInt(string.substring(5,7));
                 ArrayList<Integer> monthlist = new ArrayList<Integer>();
                 for (int i = 1; i < 13; i++) {
@@ -72,6 +88,8 @@ public class Adding extends ActionBarActivity {
                 if (monthlist.contains(month)) {
                     String dash2 = string.substring(7,8);
                     if (dash2.equals("-")) {
+
+                        // Checks for proper date
                         int day = Integer.parseInt(string.substring(8));
                         ArrayList<Integer> dayList = new ArrayList<Integer>();
                         for (int i = 1; i < 32; i++) {
@@ -92,9 +110,11 @@ public class Adding extends ActionBarActivity {
         } catch (Exception e) {
             // Do nothing
         }
+        // Returns an int either 0 or 1 that sends proper message
         return isWrong;
     }
 
+    // Taken from lonely Twitter
     public void loadFromFile() {
         try {
             FileInputStream fis = openFileInput(FILENAME);
@@ -103,7 +123,6 @@ public class Adding extends ActionBarActivity {
             Gson gson = new Gson();
             // Taken from Google
             Type listType = new TypeToken<ArrayList<Data_Entry>>() {}.getType();
-            // Read arraylist from json and set list to it
             D_logs = gson.fromJson(in, listType);
         } catch (FileNotFoundException e) {
             // Do I even need to create a log if nothing is there?
@@ -112,6 +131,7 @@ public class Adding extends ActionBarActivity {
         }
     }
 
+    // Taken from lonely Twitter
     public void saveInFile() {
         try {
             FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
@@ -128,6 +148,9 @@ public class Adding extends ActionBarActivity {
         }
     }
 
+    // Add data sets up collects and checks to make sure each entry is correct
+    // If everything is correct data is added to file
+    // If entry(s) are incorrect will send a toast message
     public void addData() {
         try {
             EditText setsStation = (EditText) findViewById(R.id.editStation);
@@ -135,10 +158,13 @@ public class Adding extends ActionBarActivity {
 
             EditText setsDate = (EditText) findViewById(R.id.editDate);
             String sDate = setsDate.getText().toString();
+
+            // Checks date else where to keep code clean
             checker = checkDate(sDate);
             if (checker == 1) {
                 throw new RuntimeException();
             }
+
             EditText setsflGrade = (EditText) findViewById(R.id.gradeText);
             String sFlGrade = setsflGrade.getText().toString();
 
@@ -151,6 +177,7 @@ public class Adding extends ActionBarActivity {
             EditText setsOdo = (EditText) findViewById(R.id.editOdo);
             float sOdo = Float.valueOf(setsOdo.getText().toString());
 
+            // Creates data log and goes back MainActivity
             Data_Entry log = new Data_Entry(station, sDate, sFlGrade, sAmount, sUnit, sOdo);
             log.findCost();
             D_logs.add(log);
